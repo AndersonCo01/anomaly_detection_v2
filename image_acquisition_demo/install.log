@@ -1,0 +1,128 @@
+Requirement already satisfied: opencv-python>=4.8.0 in /Library/Frameworks/Python.framework/Versions/3.15/lib/python3.15/site-packages (from -r requirements.txt (line 2)) (5.0.0.93)
+Collecting Pillow>=9.0.0 (from -r requirements.txt (line 3))
+  Using cached pillow-12.3.0-cp315-cp315-macosx_11_0_arm64.whl.metadata (9.1 kB)
+Requirement already satisfied: numpy>=1.21.0 in /Library/Frameworks/Python.framework/Versions/3.15/lib/python3.15/site-packages (from -r requirements.txt (line 4)) (2.5.1)
+Collecting ultralytics>=8.0.0 (from -r requirements.txt (line 7))
+  Using cached ultralytics-8.4.96-py3-none-any.whl.metadata (42 kB)
+Collecting cv2-enumerate-cameras>=0.1.0 (from -r requirements.txt (line 10))
+  Using cached cv2_enumerate_cameras-1.3.3-py3-none-any.whl.metadata (6.1 kB)
+Collecting matplotlib>=3.3.0 (from ultralytics>=8.0.0->-r requirements.txt (line 7))
+  Using cached matplotlib-3.11.0.tar.gz (33.3 MB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Installing backend dependencies: started
+  Installing backend dependencies: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): still running...
+  Preparing metadata (pyproject.toml): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  × Preparing metadata (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [94 lines of output]
+      + meson setup /private/var/folders/k_/nj0349vx0cngzn0619kss7nm0000gn/T/pip-install-l0ps641c/matplotlib_48f6ffb27e684afc9d8ed9fb116767df /private/var/folders/k_/nj0349vx0cngzn0619kss7nm0000gn/T/pip-install-l0ps641c/matplotlib_48f6ffb27e684afc9d8ed9fb116767df/.mesonpy-ptbvn5hx -Dbuildtype=release -Db_ndebug=if-release -Db_vscrt=md --native-file=/private/var/folders/k_/nj0349vx0cngzn0619kss7nm0000gn/T/pip-install-l0ps641c/matplotlib_48f6ffb27e684afc9d8ed9fb116767df/.mesonpy-ptbvn5hx/meson-python-native-file.ini
+      The Meson build system
+      Version: 1.11.2
+      Source dir: /private/var/folders/k_/nj0349vx0cngzn0619kss7nm0000gn/T/pip-install-l0ps641c/matplotlib_48f6ffb27e684afc9d8ed9fb116767df
+      Build dir: /private/var/folders/k_/nj0349vx0cngzn0619kss7nm0000gn/T/pip-install-l0ps641c/matplotlib_48f6ffb27e684afc9d8ed9fb116767df/.mesonpy-ptbvn5hx
+      Build type: native build
+      Program python found: YES 3.15.0 3.15.0
+      Project name: matplotlib
+      Project version: 3.11.0
+      C compiler for the host machine: cc (clang 17.0.0 "Apple clang version 17.0.0 (clang-1700.6.3.2)")
+      C linker for the host machine: cc ld64 1230.1
+      C++ compiler for the host machine: c++ (clang 17.0.0 "Apple clang version 17.0.0 (clang-1700.6.3.2)")
+      C++ linker for the host machine: c++ ld64 1230.1
+      Host machine cpu family: aarch64
+      Host machine cpu: aarch64
+      Program python found: YES (/Library/Frameworks/Python.framework/Versions/3.15/bin/python3)
+      Found pkg-config: YES (/opt/homebrew/bin/pkg-config) 2.5.1
+      Run-time dependency python found: YES 3.15
+      Found pkg-config: YES (/opt/homebrew/bin/pkg-config) 2.5.1
+      pybind11-config found: YES (/private/var/folders/k_/nj0349vx0cngzn0619kss7nm0000gn/T/pip-build-env-9cgpcmu9/overlay/bin/pybind11-config) 3.0.4
+      Run-time dependency pybind11 found: YES 3.0.4
+      Downloading freetype2 source from https://download.savannah.nongnu.org/releases/freetype/freetype-2.14.3.tar.xz
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://download.savannah.nongnu.org/releases/freetype/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://download.savannah.nongnu.org/releases/freetype/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://download.savannah.nongnu.org/releases/freetype/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://download.savannah.nongnu.org/releases/freetype/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://download.savannah.nongnu.org/releases/freetype/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      Downloading freetype2 source from https://downloads.sourceforge.net/project/freetype/freetype2/2.14.3/freetype-2.14.3.tar.xz
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://downloads.sourceforge.net/project/freetype/freetype2/2.14.3/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://downloads.sourceforge.net/project/freetype/freetype2/2.14.3/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://downloads.sourceforge.net/project/freetype/freetype2/2.14.3/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://downloads.sourceforge.net/project/freetype/freetype2/2.14.3/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      WARNING: failed to download with error: could not get https://downloads.sourceforge.net/project/freetype/freetype2/2.14.3/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.. Trying after a delay...
+      <urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:1108)>
+      ERROR: Subproject freetype2 is buildable: NO
+      
+      ../extern/meson.build:12:18: ERROR: could not get https://downloads.sourceforge.net/project/freetype/freetype2/2.14.3/freetype-2.14.3.tar.xz; is the internet available?
+      
+          If you believe the connection should be secure, but python cannot see the
+          correct SSL certificates, install https://truststore.readthedocs.io/ and
+          try again.
+      
+      A full log can be found at /private/var/folders/k_/nj0349vx0cngzn0619kss7nm0000gn/T/pip-install-l0ps641c/matplotlib_48f6ffb27e684afc9d8ed9fb116767df/.mesonpy-ptbvn5hx/meson-logs/meson-log.txt
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> matplotlib
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.

@@ -46,38 +46,31 @@ class DefectDetector:
         print(result["heatmap"])      # (H, W) anomaly heatmap
     """
 
+class DefectDetector:
+
     def __init__(
         self,
         model_dir: str | Path | None = None,
         threshold: float = 0.5,
     ):
-        """
-        Args:
-            model_dir: Directory containing the PatchCore checkpoint.
-                       Defaults to models/patchcore/.
-            threshold: Anomaly score threshold for defective classification.
-        """
+        self.device = torch.device("cpu")
+
         self.model_dir = Path(model_dir) if model_dir else PATCHCORE_MODEL_DIR
         self.threshold = threshold
         self.model: Optional[Patchcore] = None
         self._inference_count = 0
 
         logger.info(
-            "DefectDetector initialized | model_dir=%s | threshold=%.2f",
+            "DefectDetector initialized | model_dir=%s | threshold=%.2f | device=%s",
             self.model_dir,
             self.threshold,
+            self.device,
         )
 
     def load_model(self) -> None:
         """
-        Load the PatchCore model from checkpoint.
-
-        Searches the model directory for the best checkpoint saved
-        by the Anomalib Engine during training.
-        """
+        Load the PatchCore model from checkpoint."""
         start = time.perf_counter()
-
-        # Find the checkpoint file (Anomalib saves with Lightning conventions)
         ckpt_files = list(self.model_dir.rglob("*.ckpt"))
         if not ckpt_files:
             raise FileNotFoundError(
@@ -88,7 +81,12 @@ class DefectDetector:
         ckpt_path = ckpt_files[0]
         logger.info("Loading model from %s", ckpt_path)
 
-        self.model = Patchcore.load_from_checkpoint(str(ckpt_path), weights_only=False)
+        self.model = Patchcore.load_from_checkpoint(
+            str(ckpt_path),
+            weights_only=False,
+        )
+
+        self.model.to(self.device)
         self.model.eval()
 
         elapsed_ms = (time.perf_counter() - start) * 1000
@@ -102,11 +100,11 @@ class DefectDetector:
             image: RGB numpy array (H, W, 3), uint8.
 
         Returns:
-            Dictionary with keys:
-                - label: "Defective" or "Good"
-                - score: float anomaly score (higher = more anomalous)
-                - heatmap: (H, W) float32 array in [0, 1]
-                - latency_ms: inference time in milliseconds
+            Dictionary containing:
+            - label
+            - score
+            - heatmap
+            - latency_ms
         """
         if self.model is None:
             self.load_model()
@@ -116,12 +114,25 @@ class DefectDetector:
         # Convert raw image to tensor: (H, W, 3) uint8 -> (1, 3, H, W) float [0, 1]
         # Do NOT apply ImageNet normalization here — the model's
         # built-in pre_processor handles resize + normalize.
-        tensor = torch.from_numpy(image).permute(2, 0, 1).float() / 255.0
-        tensor = tensor.unsqueeze(0)  # Add batch dim
+        tensor = (
+            torch.from_numpy(image)
+            .permute(2, 0, 1)
+            .float()
+            .div(255.0)
+            .unsqueeze(0)
+            .to(self.device)
+        )
 
         # Run full pipeline: pre_processor -> model -> post_processor
+        if hasattr(self.model, "pre_processor"):
+            tensor = self.model.pre_processor(tensor)
+
+        print("Input device:", tensor.device)
+        print("Model device:", next(self.model.parameters()).device)
+
         with torch.no_grad():
             output = self.model(tensor)
+              
 
         # Extract results from Anomalib v2 InferenceBatch
         score = self._extract_score(output)
@@ -189,7 +200,7 @@ class DefectDetector:
 
         logger.warning("Could not extract heatmap from output type: %s", type(output))
         return np.zeros((256, 256), dtype=np.float32)
-
+        
     def predict_from_file(self, image_path: str | Path) -> dict:
         """
         Convenience method to predict from a file path.
@@ -201,11 +212,14 @@ class DefectDetector:
             Same dict as predict(), with added 'source_path' key.
         """
         image_path = Path(image_path)
+
         image = cv2.imread(str(image_path))
         if image is None:
             raise FileNotFoundError(f"Cannot read image: {image_path}")
 
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
         result = self.predict(image)
         result["source_path"] = str(image_path)
+
         return result

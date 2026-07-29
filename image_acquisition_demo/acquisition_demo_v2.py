@@ -48,7 +48,7 @@ except ImportError:
 
 try:
     from cv2_enumerate_cameras import enumerate_cameras
-    ENUM_AVAILABLE = True
+    ENUM_AVAILABLE = False
 except ImportError:
     ENUM_AVAILABLE = False
 
@@ -92,7 +92,7 @@ def discover_cameras() -> list[tuple[int, str]]:
     else:
         found = []
         for i in range(4):
-            cap = cv2.VideoCapture(i)
+            cap = cv2.VideoCapture(i, cv2.CAP_AVFOUNDATION)
             if cap.isOpened():
                 found.append((i, f"Camera {i}"))
                 cap.release()
@@ -154,7 +154,7 @@ class CameraProducer(threading.Thread):
         self._fps_history: deque = deque(maxlen=30)
 
     def run(self):
-        cap = cv2.VideoCapture(self.camera_index)
+        cap = cv2.VideoCapture(self.camera_index, cv2.CAP_AVFOUNDATION)
         if not cap.isOpened():
             print(f"ERROR: Cannot open camera {self.camera_index}")
             return
