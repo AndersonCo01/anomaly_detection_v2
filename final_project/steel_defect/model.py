@@ -67,7 +67,39 @@ class SteelCNN(nn.Module):
         # ┌──────────────────────────────────────────────┐
         # │  MODEL-1: Write your code below              │
         # └──────────────────────────────────────────────┘
-        raise NotImplementedError("MODEL-1: Define CNN layers in __init__")
+
+        super().__int__()
+
+        self.features = nn.Sequential(
+            #Block 1 
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+            #Block 2
+            nn.Conv2d(32, 63, Kernel_size=3, padding=1),
+            nn.BtchNorm2d(64),
+            nn.MaxPool2d(2),
+
+            #Block 3 
+            nn.Conv2d(63, 128, kernel_size=3, padding=1),
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+
+        )
+
+        self.pool = nn.AdaptativeAvgPool2d(1)
+
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.linear(128, 64),
+            nn.ReLU(),
+            nn.Dropout(0.3),
+            nn.Linear(64, num_classes),
+        )
+                    
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -94,7 +126,11 @@ class SteelCNN(nn.Module):
         # ┌──────────────────────────────────────────────┐
         # │  MODEL-2: Write your code below              │
         # └──────────────────────────────────────────────┘
-        raise NotImplementedError("MODEL-2: Implement forward pass")
+
+            x = self.features(x)
+            x = self.pool(x)
+            x = self.classifier(x)
+            return x
 
     @property
     def num_parameters(self) -> int:
