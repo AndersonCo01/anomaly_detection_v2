@@ -14,6 +14,8 @@ from torch.utils.data import Dataset, DataLoader
 
 from steel_defect.utils import setup_logging, CLASS_NAMES, DATA_DIR, IMAGE_SIZE
 
+from sklearn.model_selection import train_test_split
+
 logger = setup_logging(__name__)
 
 # File extensions to include when scanning for images
@@ -66,7 +68,26 @@ def build_file_list(data_dir: Path | str | None = None) -> list[tuple[str, int]]
     # ┌──────────────────────────────────────────────┐
     # │  DATA-1: Write your code below               │
     # └──────────────────────────────────────────────┘
-    raise NotImplementedError("DATA-1: Implement dataset directory scanning")
+
+
+file_list = []
+    for folder in data_dir.iterdir()
+        if folder.is_dir() and folder.name in CLASS_NAMES:
+            label = CLASS_NAMES.index(folder.name)
+
+    for image_path in folder.iterdir()
+        if image_path.is_file() and image_path.suffix.lower() in IMAGE_EXTENSIONS:
+            file_list.append((str(image_path), label))
+
+    file_list.sort(key=lambda x: x[0])
+
+    logger.info(
+        "Data set scanned / images=%d / classes=%s",
+        len(file_list),
+        CLASS_NAMES,
+    )
+
+    return file_list
 
 
 def create_splits(
@@ -108,6 +129,39 @@ def create_splits(
     # └──────────────────────────────────────────────┘
     raise NotImplementedError("DATA-3: Implement train/val/test splitting")
 
+
+    labels = [label for _, label in file_list]
+    test_ratio = 1.0 - train_ratio - val_ratio
+
+    train_val_list, test_list = train_test_split(
+        file list,
+        test_size=test_ratio,
+        stratify=labels 
+        random_state=seed,
+    )
+    train_val_labels = [
+        label for _, label in trail_val_list
+    ]
+
+    val_relative_ratio = val_ratio / (train_ratio + val_ratio)
+
+    train_list, val_list = train_test_split(
+        train_val_list,
+        test_size=val_relative_ratio,
+        stratify=train_val_labels,
+        random_state=seed,
+        
+    )
+
+    logger.info(
+        "Dataset split | train=%d | val=%d | test=%d",
+        len(train_list),
+        len(val_list),
+        len(test_list),
+    )
+
+    return train_list, val_list, test_list
+    )
 
 class SteelDataset(Dataset):
     """
@@ -167,8 +221,25 @@ class SteelDataset(Dataset):
         # ┌──────────────────────────────────────────────┐
         # │  DATA-2: Write your code below               │
         # └──────────────────────────────────────────────┘
-        raise NotImplementedError("DATA-2: Implement __getitem__")
 
+    image_path, label = self.file_list[idx]
+
+    image = cv2.imread(image_path)
+
+    if image is None: 
+        raise FileNotFoundError (
+            f"Could not read image: {image_path}"
+        )
+    image = cv2.cvtColor(
+        image,
+        cv2.COLOR_BGR2RGB
+    )
+
+    if self.transform is not None:
+        result = self.transform(image=image)
+        image = result["image"]
+
+    return image, label
 
 # ── Scaffold — DataLoader helper ──────────────────────────────
 
