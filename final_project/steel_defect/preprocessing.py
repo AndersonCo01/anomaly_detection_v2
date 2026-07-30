@@ -46,7 +46,25 @@ def build_train_transforms() -> A.Compose:
     # ┌──────────────────────────────────────────────┐
     # │  PREPROCESS-1: Write your code below         │
     # └──────────────────────────────────────────────┘
-    raise NotImplementedError("PREPROCESS-1: Implement training transforms")
+
+    return A.Compose([
+        A.Resize(
+            height=IMAGE_SIZE[0],
+            width=IMAGE_SIZE[1],
+        ),
+        A.HorizontalFlip(
+            p=0.5,
+        ),
+        A.RamdomBrightneesContrast(
+            p=0.3,
+        ),
+        A.Normalize(
+            mean=IMAGENT_MEAN,
+            std=IMAGENET_STD,
+        ),
+        ToTensonV2(),
+        ]
+        )
 
 
 def build_val_transforms() -> A.Compose:
@@ -65,8 +83,18 @@ def build_val_transforms() -> A.Compose:
     # ┌──────────────────────────────────────────────┐
     # │  PREPROCESS-2: Write your code below         │
     # └──────────────────────────────────────────────┘
-    raise NotImplementedError("PREPROCESS-2: Implement validation transforms")
-
+    
+    return A.Compose([
+        A.Resize(
+            height=IMAGE_SIZE[0],
+            width=IMAGE_SIZE[1],
+        ),
+        A.Normalize(
+            mean=IMAGENET_MEAN,
+            std=IMAGENET_STD,
+        ),
+        ToTensonV2(),
+    ])
 
 # ── Scaffold — provided for Grad-CAM overlay ──────────────────
 
