@@ -55,16 +55,15 @@ def build_train_transforms() -> A.Compose:
         A.HorizontalFlip(
             p=0.5,
         ),
-        A.RamdomBrightneesContrast(
+        A.RandomBrightnessContrast(
             p=0.3,
         ),
         A.Normalize(
-            mean=IMAGENT_MEAN,
+            mean=IMAGENET_MEAN,
             std=IMAGENET_STD,
         ),
-        ToTensonV2(),
-        ]
-        )
+        ToTensorV2(),
+        ])
 
 
 def build_val_transforms() -> A.Compose:
@@ -93,8 +92,9 @@ def build_val_transforms() -> A.Compose:
             mean=IMAGENET_MEAN,
             std=IMAGENET_STD,
         ),
-        ToTensonV2(),
+        ToTensorV2(),
     ])
+
 
 # ── Scaffold — provided for Grad-CAM overlay ──────────────────
 
