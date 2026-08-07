@@ -190,18 +190,18 @@ col_auto, col_manual, col_spacer = st.columns([1, 1, 2])
 
 with col_auto:
     if st.session_state.running:
-        if st.button("⏹  Stop", type="primary", use_container_width=True):
+        if st.button("⏹  Stop", type="primary", width="stretch"):
             st.session_state.running = False
             st.rerun()
     else:
-        if st.button("▶  Auto Inspect", type="primary", use_container_width=True):
+        if st.button("▶  Auto Inspect", type="primary", width="stretch"):
             st.session_state.running = True
             st.rerun()
 
 with col_manual:
     manual_btn = st.button(
         "🔬 Single Inspect",
-        use_container_width=True,
+        width="stretch",
         disabled=st.session_state.running,
     )
 
@@ -272,7 +272,7 @@ def display_result(result: dict, image: np.ndarray, source: str):
     # ── Scaffold: image display ───────────────────────────
     img_header.subheader("Input Image")
     display_img = cv2.resize(image, IMAGE_SIZE)
-    img_display.image(display_img, use_container_width=True)
+    img_display.image(display_img, width="stretch")
     img_caption.caption(f"Source: {source}")
 
     # ── Scaffold: Grad-CAM overlay ────────────────────────
@@ -284,7 +284,7 @@ def display_result(result: dict, image: np.ndarray, source: str):
         tensor = tensor.unsqueeze(0)
         heatmap = generate_gradcam(predictor, tensor)
         blended = overlay_gradcam(display_img, heatmap, alpha=gradcam_alpha)
-        cam_display.image(blended, use_container_width=True)
+        cam_display.image(blended, width="stretch")
         cam_caption.caption("Red = high activation")
     except Exception:
         cam_display.info("Grad-CAM unavailable")
@@ -295,35 +295,22 @@ def display_result(result: dict, image: np.ndarray, source: str):
     # │  stats_latency, and stats_scores using the result    │
     # │  dict. See docstring above for details.              │
     # └──────────────────────────────────────────────────────┘
-
-    #Display prediction 
-    stats_header.subheader("Prediction")
-
-    #Extract values from prediction result
     label = result["label"]
-    confidence = result["Confidence"]
-    latency_ms = result["latenct_ms"]
+    confidence = result["confidence"]
+    latency_ms = result["latency_ms"]
 
-    #Display predicted class
+    stats_header.subheader("Prediction")
     if label == "no_defect":
         stats_label.success(f"✅ **{label}**")
-    else: 
+    else:
         stats_label.error(f"🔴 **{label}**")
-
-    #Display confidence 
-    stats_confidence.metric(
-        "Confidence"
-        f"{confidence:.1%}"
-    )
-
-    #Display probability for every class
+    stats_confidence.metric("Confidence", f"{confidence:.1%}")
+    stats_latency.metric("Latency", f"{latency_ms:.0f} ms")
     with stats_scores.container():
         for class_name, score in result["class_scores"].items():
-            st.progress(
-                score,
-                text=f"{class_name}: {score:.1%}"
-                
-            )
+            st.progress(score, text=f"{class_name}: {score:.1%}")
+
+
 def display_history():
     """Render recent inspection history."""
     if not st.session_state.history:
@@ -383,3 +370,4 @@ if st.session_state.running:
 
 if not st.session_state.running and not manual_btn:
     display_history()
+
