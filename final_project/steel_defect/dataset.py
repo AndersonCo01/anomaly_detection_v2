@@ -23,13 +23,12 @@ def build_file_list(data_dir: Path | str | None = None) -> list[tuple[str, int]]
     """
     DATA-1: Scan the dataset directory and build a list of (path, label) pairs.
 
-    The dataset is organized as one subdirectory per class:
-        data/steel_defect/
-        ── no_defect/   → label 0
-        ── defect_1/    → label 1
-        ── defect_2/    → label 2
-        ── defect_3/    → label 3
-        ── defect_4/    → label 4
+    The dataset is organized as one subdirectory per class, for example:
+        no_defect/ -> label 0
+        defect_1/  -> label 1
+        defect_2/  -> label 2
+        defect_3/  -> label 3
+        defect_4/  -> label 4
 
     For each class folder that exists in CLASS_NAMES:
         1. Get the label index from CLASS_NAMES.index(folder_name)
@@ -45,12 +44,6 @@ def build_file_list(data_dir: Path | str | None = None) -> list[tuple[str, int]]
 
     Raises:
         FileNotFoundError: If data_dir does not exist.
-
-    Hint:
-        - Use Path(data_dir).iterdir() to loop over subdirectories
-        - Check if folder.name is in CLASS_NAMES
-        - Use path.suffix.lower() to check file extensions
-        - Remember to sort the final list for reproducibility
     """
     if data_dir is None:
         data_dir = DATA_DIR
@@ -62,10 +55,7 @@ def build_file_list(data_dir: Path | str | None = None) -> list[tuple[str, int]]
             f"Place your images in subdirectories: {', '.join(CLASS_NAMES)}"
         )
 
-    # 
-    #  DATA-1: Write your code below               
-    # 
-    
+    # DATA-1: collect (path, label) pairs from class subdirectories
     file_list = []
     for class_dir in data_dir.iterdir():
         if not class_dir.is_dir() or class_dir.name not in CLASS_NAMES:
@@ -95,28 +85,7 @@ def create_splits(
 
     Both splits should use stratification (stratify by labels) to ensure
     each class is proportionally represented in all splits.
-
-    Args:
-        file_list: List of (image_path, label) tuples from build_file_list().
-        train_ratio: Fraction of data for training (default 0.7).
-        val_ratio: Fraction of data for validation (default 0.15).
-        seed: Random seed for reproducibility.
-
-    Returns:
-        Tuple of (train_list, val_list, test_list), each a list of
-        (image_path, label) tuples.
-
-    Hint:
-        - Extract labels: [label for _, label in file_list]
-        - test_ratio = 1.0 - train_ratio - val_ratio
-        - First split: train_test_split(file_list, test_size=test_ratio,
-                                         stratify=labels, random_state=seed)
-        - val_ratio relative to the remaining = val_ratio / (train_ratio + val_ratio)
-        - Second split on the non-test portion using the adjusted ratio
     """
-    # ┌──────────────────────────────────────────────┐
-    # │  DATA-3: Write your code below               │
-    # └──────────────────────────────────────────────┘
     if not file_list:
         raise ValueError("Cannot split an empty file list")
     if train_ratio <= 0 or val_ratio <= 0 or train_ratio + val_ratio >= 1:
@@ -183,22 +152,7 @@ class SteelDataset(Dataset):
                result = self.transform(image=image)
                image = result["image"]
             5. Return (image, label)
-
-        Args:
-            idx: Index into self.file_list.
-
-        Returns:
-            Tuple of (image_tensor, label_int).
-            - image_tensor: (3, H, W) float32 tensor if transforms include ToTensorV2
-            - label_int: integer class label
-
-        Hint:
-            - cv2.imread returns None if the file can't be read — check for this
-            - cv2.cvtColor(img, cv2.COLOR_BGR2RGB) converts BGR to RGB
         """
-        # ┌──────────────────────────────────────────────┐
-        # │  DATA-2: Write your code below               │
-        # └──────────────────────────────────────────────┘
         image_path, label = self.file_list[idx]
         image = cv2.imread(image_path)
         if image is None:
@@ -209,7 +163,7 @@ class SteelDataset(Dataset):
         return image, label
 
 
-# ── Scaffold — DataLoader helper ──────────────────────────────
+# Scaffold - DataLoader helper
 
 def create_dataloaders(
     train_list: list,
@@ -221,17 +175,6 @@ def create_dataloaders(
 ) -> tuple[DataLoader, DataLoader]:
     """
     Create training and validation DataLoaders.
-
-    Args:
-        train_list: Training (path, label) pairs.
-        val_list: Validation (path, label) pairs.
-        train_transform: Augmentation pipeline for training.
-        val_transform: Deterministic pipeline for validation.
-        batch_size: Batch size for both loaders.
-        num_workers: Number of data loading workers.
-
-    Returns:
-        Tuple of (train_loader, val_loader).
     """
     train_ds = SteelDataset(train_list, transform=train_transform)
     val_ds = SteelDataset(val_list, transform=val_transform)
