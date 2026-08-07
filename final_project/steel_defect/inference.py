@@ -90,30 +90,16 @@ class SteelPredictor:
         # ┌──────────────────────────────────────────────┐
         # │  INFER-1: Write your code below              │
         # └──────────────────────────────────────────────┘
-    
-       if not self.checkpoint_path.exists():
+        if not self.checkpoint_path.exists():
             raise FileNotFoundError(
-                f"Checkpoint not found:{self.checkpoint_path}"
+                f"Checkpoint not found: {self.checkpoint_path}. Train the model first."
             )
-
-        checkpoint = torch.load(
-            self.checkpoint_path,
-            map_location=self.device,
-        )
-
-        model = SteelCNN(num_classes=NUM_CLASSES)
-
-        model.load_state_dict(
-            checkpoint["model_state_dict"]
-        )
-
+        checkpoint = torch.load(self.checkpoint_path, map_location=self.device)
+        model = SteelCNN(num_classes=checkpoint.get("num_classes", NUM_CLASSES))
+        model.load_state_dict(checkpoint["model_state_dict"])
         model.to(self.device)
-
         model.eval()
-
         self.model = model
-
-        
 
         elapsed_ms = (time.perf_counter() - start) * 1000
         logger.info("Model loaded | time=%.0fms", elapsed_ms)
@@ -160,41 +146,19 @@ class SteelPredictor:
         # ┌──────────────────────────────────────────────┐
         # │  INFER-2: Write your code below              │
         # └──────────────────────────────────────────────┘
-        
-        #Apply preprocessing
-        
-        result = self.transform(image=image)
-        tensor = result["image"]
-
-        #Add batch dimension 
-        tensor = tensor.unsqueeze(0)
-
-        #Move to device
-        tensor = tensor.to(self.device)
-
-        #Forward pass
+        transformed = self.transform(image=image)
+        tensor = transformed["image"].unsqueeze(0).to(self.device)
         with torch.no_grad():
             logits = self.model(tensor)
+            probs = F.softmax(logits, dim=1)
 
-        #Convert logits to probabilities
-        probs = F.softmax(logits, dim=1)
-
-        #Get prediction
         confidence, predicted = probs.max(dim=1)
-
-        predicted_idx = predicted.item()
-        confidence_val = confidence.item()
-
+        predicted_idx = int(predicted.item())
+        confidence_val = float(confidence.item())
         label = CLASS_NAMES[predicted_idx]
+        probs_np = probs.squeeze(0).cpu().numpy()
+        class_scores = {name: float(prob) for name, prob in zip(CLASS_NAMES, probs_np)}
 
-        #Conver probabilities into a dictionary
-        probs_np = probs.squeeze().cpu().numpy()
-
-        class_scores = {
-            name: float(score)
-            for name, score in zip(CLASS_NAMES, probs_np)
-        }
-        
         elapsed_ms = (time.perf_counter() - start) * 1000
         self._inference_count += 1
 
