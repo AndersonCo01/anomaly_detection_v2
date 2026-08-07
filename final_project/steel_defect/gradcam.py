@@ -139,3 +139,4 @@ class GradCAM:
         """Remove the registered hooks (call when done)."""
         self._fwd_hook.remove()
         self._bwd_hook.remove()
+
