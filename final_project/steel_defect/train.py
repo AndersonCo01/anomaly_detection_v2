@@ -56,13 +56,10 @@ def setup_training(
     # ┌──────────────────────────────────────────────┐
     # │  TRAIN-1: Write your code below              │
     # └──────────────────────────────────────────────┘
-
     criterion = nn.CrossEntropyLoss()
-    optimizer = optin.Adam(
-        model.parameters(),
-        lr=learning_rate,
-    )
+    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     return criterion, optimizer
+
 
 def train_one_epoch(
     model: nn.Module,
@@ -113,9 +110,7 @@ def train_one_epoch(
     # ┌──────────────────────────────────────────────┐
     # │  TRAIN-2: Write your code below              │
     # └──────────────────────────────────────────────┘
-
     model.train()
-
     running_loss = 0.0
     correct = 0
     total = 0
@@ -123,22 +118,20 @@ def train_one_epoch(
     for images, labels in loader:
         images = images.to(device)
         labels = labels.to(device)
-
         optimizer.zero_grad()
-
         outputs = model(images)
         loss = criterion(outputs, labels)
         loss.backward()
         optimizer.step()
+
         running_loss += loss.item()
-        _, predicted = outputs.max(1)
+        predicted = outputs.argmax(dim=1)
         total += labels.size(0)
         correct += predicted.eq(labels).sum().item()
 
-    average_loss = running_loss / len(loader)
-    accuracy = correct / total
-
-    return average_loss, accuracy
+    if len(loader) == 0 or total == 0:
+        raise ValueError("Training loader is empty")
+    return running_loss / len(loader), correct / total
 
 
 def validate(
@@ -173,9 +166,7 @@ def validate(
     # ┌──────────────────────────────────────────────┐
     # │  TRAIN-3: Write your code below              │
     # └──────────────────────────────────────────────┘
-
     model.eval()
-
     running_loss = 0.0
     correct = 0
     total = 0
@@ -183,19 +174,18 @@ def validate(
     with torch.no_grad():
         for images, labels in loader:
             images = images.to(device)
-            labels = labels.t0 (device)
-
+            labels = labels.to(device)
             outputs = model(images)
             loss = criterion(outputs, labels)
+
             running_loss += loss.item()
-            _, predicted = outputs.max(1)
+            predicted = outputs.argmax(dim=1)
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
 
-    average_loss = running_loss / len(loader)
-    accuracy = correct / total
-
-    return average_loss, accuracy
+    if len(loader) == 0 or total == 0:
+        raise ValueError("Validation loader is empty")
+    return running_loss / len(loader), correct / total
 
 
 # ── Scaffold — main training loop ─────────────────────────────
@@ -290,30 +280,18 @@ def train(
         # │        logger.info("Saved best model ...")   │
         # └──────────────────────────────────────────────┘
         # TRAIN-4: Write your code below
-
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-
             checkpoint = {
                 "model_state_dict": model.state_dict(),
                 "optimizer_state_dict": optimizer.state_dict(),
                 "epoch": epoch,
-                "best_value_acc": best_val_acc,
+                "best_val_acc": best_val_acc,
                 "num_classes": NUM_CLASSES,
-            
             }
+            torch.save(checkpoint, CHECKPOINT_PATH)
+            logger.info("Saved best model | val_acc=%.3f | path=%s", best_val_acc, CHECKPOINT_PATH)
 
-            torch.save(
-                checkpoint,
-                CHECKPOINT_PATH,
-            )
-
-            logger.info(
-                "Saved best model to %s (val_acc=%.3f)",
-                CHECKPOINT_PATH,
-                best_val_acc,
-            )
-            
     elapsed = time.time() - start_time
     logger.info("Training complete | time=%.1fs | best_val_acc=%.3f", elapsed, best_val_acc)
     return str(CHECKPOINT_PATH)
@@ -331,3 +309,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
