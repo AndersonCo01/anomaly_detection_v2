@@ -1,5 +1,4 @@
-""
-Dataset module for steel defect classification.
+"""Dataset module for steel defect classification.
 
 Provides functions to scan the class-directory dataset structure,
 create train/val/test splits, and a PyTorch Dataset class for
@@ -9,11 +8,10 @@ from pathlib import Path
 
 import albumentations as A
 import cv2
-import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
 
-from steel_defect.utils import setup_logging, CLASS_NAMES, DATA_DIR, IMAGE_SIZE
+from steel_defect.utils import setup_logging, CLASS_NAMES, DATA_DIR
 
 logger = setup_logging(__name__)
 
@@ -261,4 +259,3 @@ def create_dataloaders(
     )
 
     return train_loader, val_loader
-
