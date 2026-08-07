@@ -27,11 +27,11 @@ def build_file_list(data_dir: Path | str | None = None) -> list[tuple[str, int]]
 
     The dataset is organized as one subdirectory per class:
         data/steel_defect/
-        ├── no_defect/   → label 0
-        ├── defect_1/    → label 1
-        ├── defect_2/    → label 2
-        ├── defect_3/    → label 3
-        └── defect_4/    → label 4
+        ── no_defect/   → label 0
+        ── defect_1/    → label 1
+        ── defect_2/    → label 2
+        ── defect_3/    → label 3
+        ── defect_4/    → label 4
 
     For each class folder that exists in CLASS_NAMES:
         1. Get the label index from CLASS_NAMES.index(folder_name)
@@ -64,9 +64,10 @@ def build_file_list(data_dir: Path | str | None = None) -> list[tuple[str, int]]
             f"Place your images in subdirectories: {', '.join(CLASS_NAMES)}"
         )
 
-    # ┌──────────────────────────────────────────────┐
-    # │  DATA-1: Write your code below               │
-    # └──────────────────────────────────────────────┘
+    # 
+    #  DATA-1: Write your code below               
+    # 
+    
     file_list = []
     for class_dir in data_dir.iterdir():
         if not class_dir.is_dir() or class_dir.name not in CLASS_NAMES:
