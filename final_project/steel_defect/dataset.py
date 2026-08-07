@@ -1,4 +1,4 @@
-"""
+""
 Dataset module for steel defect classification.
 
 Provides functions to scan the class-directory dataset structure,
@@ -11,10 +11,9 @@ import albumentations as A
 import cv2
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
+from sklearn.model_selection import train_test_split
 
 from steel_defect.utils import setup_logging, CLASS_NAMES, DATA_DIR, IMAGE_SIZE
-
-from sklearn.model_selection import train_test_split
 
 logger = setup_logging(__name__)
 
@@ -68,25 +67,17 @@ def build_file_list(data_dir: Path | str | None = None) -> list[tuple[str, int]]
     # ┌──────────────────────────────────────────────┐
     # │  DATA-1: Write your code below               │
     # └──────────────────────────────────────────────┘
+    file_list = []
+    for class_dir in data_dir.iterdir():
+        if not class_dir.is_dir() or class_dir.name not in CLASS_NAMES:
+            continue
+        label = CLASS_NAMES.index(class_dir.name)
+        for image_path in class_dir.iterdir():
+            if image_path.is_file() and image_path.suffix.lower() in IMAGE_EXTENSIONS:
+                file_list.append((str(image_path), label))
 
-
-file_list = []
-    for folder in data_dir.iterdir()
-        if folder.is_dir() and folder.name in CLASS_NAMES:
-            label = CLASS_NAMES.index(folder.name)
-
-    for image_path in folder.iterdir()
-        if image_path.is_file() and image_path.suffix.lower() in IMAGE_EXTENSIONS:
-            file_list.append((str(image_path), label))
-
-    file_list.sort(key=lambda x: x[0])
-
-    logger.info(
-        "Data set scanned / images=%d / classes=%s",
-        len(file_list),
-        CLASS_NAMES,
-    )
-
+    file_list.sort(key=lambda item: item[0])
+    logger.info("Dataset scanned | directory=%s | images=%d", data_dir, len(file_list))
     return file_list
 
 
@@ -127,41 +118,29 @@ def create_splits(
     # ┌──────────────────────────────────────────────┐
     # │  DATA-3: Write your code below               │
     # └──────────────────────────────────────────────┘
-    raise NotImplementedError("DATA-3: Implement train/val/test splitting")
-
+    if not file_list:
+        raise ValueError("Cannot split an empty file list")
+    if train_ratio <= 0 or val_ratio <= 0 or train_ratio + val_ratio >= 1:
+        raise ValueError("train_ratio and val_ratio must be positive and sum to less than 1")
 
     labels = [label for _, label in file_list]
     test_ratio = 1.0 - train_ratio - val_ratio
-
-    train_val_list, test_list = train_test_split(
-        file list,
+    train_val, test = train_test_split(
+        file_list,
         test_size=test_ratio,
-        stratify=labels 
+        stratify=labels,
         random_state=seed,
     )
-    train_val_labels = [
-        label for _, label in trail_val_list
-    ]
-
-    val_relative_ratio = val_ratio / (train_ratio + val_ratio)
-
-    train_list, val_list = train_test_split(
-        train_val_list,
-        test_size=val_relative_ratio,
+    train_val_labels = [label for _, label in train_val]
+    adjusted_val_ratio = val_ratio / (train_ratio + val_ratio)
+    train, val = train_test_split(
+        train_val,
+        test_size=adjusted_val_ratio,
         stratify=train_val_labels,
         random_state=seed,
-        
     )
+    return list(train), list(val), list(test)
 
-    logger.info(
-        "Dataset split | train=%d | val=%d | test=%d",
-        len(train_list),
-        len(val_list),
-        len(test_list),
-    )
-
-    return train_list, val_list, test_list
-    )
 
 class SteelDataset(Dataset):
     """
@@ -221,25 +200,15 @@ class SteelDataset(Dataset):
         # ┌──────────────────────────────────────────────┐
         # │  DATA-2: Write your code below               │
         # └──────────────────────────────────────────────┘
+        image_path, label = self.file_list[idx]
+        image = cv2.imread(image_path)
+        if image is None:
+            raise FileNotFoundError(f"Cannot read image: {image_path}")
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        if self.transform is not None:
+            image = self.transform(image=image)["image"]
+        return image, label
 
-    image_path, label = self.file_list[idx]
-
-    image = cv2.imread(image_path)
-
-    if image is None: 
-        raise FileNotFoundError (
-            f"Could not read image: {image_path}"
-        )
-    image = cv2.cvtColor(
-        image,
-        cv2.COLOR_BGR2RGB
-    )
-
-    if self.transform is not None:
-        result = self.transform(image=image)
-        image = result["image"]
-
-    return image, label
 
 # ── Scaffold — DataLoader helper ──────────────────────────────
 
@@ -291,3 +260,4 @@ def create_dataloaders(
     )
 
     return train_loader, val_loader
+
