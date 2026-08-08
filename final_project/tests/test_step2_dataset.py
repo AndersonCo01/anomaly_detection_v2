@@ -17,7 +17,7 @@ from steel_defect.utils import CLASS_NAMES
 from steel_defect.dataset import build_file_list, SteelDataset, create_splits
 
 
-# ── Fixtures ──────────────────────────────────────────────
+# -- Fixtures --
 
 @pytest.fixture
 def dataset_dir(tmp_path):
@@ -47,7 +47,7 @@ def simple_transform():
     ])
 
 
-# ── DATA-1: build_file_list ──────────────────────────────
+# -- DATA-1: build_file_list --
 
 class TestData1BuildFileList:
     """DATA-1: build_file_list."""
@@ -112,7 +112,7 @@ class TestData1BuildFileList:
             assert Path(path).exists(), f"Path does not exist: {path}"
 
 
-# ── DATA-2: SteelDataset.__getitem__ ─────────────────────
+# -- DATA-2: SteelDataset.__getitem__ --
 
 class TestData2Getitem:
     """DATA-2: SteelDataset.__getitem__."""
@@ -167,7 +167,7 @@ class TestData2Getitem:
         assert len(ds) == len(file_list)
 
 
-# ── DATA-3: create_splits ────────────────────────────────
+# -- DATA-3: create_splits --
 
 class TestData3Splits:
     """DATA-3: create_splits."""
