@@ -1,8 +1,8 @@
 """
-Step 4 Style Checks — training setup recommendations (advisory, non-blocking).
+Step 4 Style Checks - training setup recommendations (advisory, non-blocking).
 
 These tests check whether your training setup follows the recommended
-approach from the hints. They will NOT block your CI from passing —
+approach from the hints. They will NOT block your CI from passing -
 they are informational only.
 
 Recommended setup:
@@ -37,7 +37,7 @@ def tiny_model():
 
 
 class TestTrainStyle:
-    """Advisory checks — recommended but not required."""
+    """Advisory checks - recommended but not required."""
 
     def test_uses_cross_entropy_loss(self, tiny_model):
         criterion, _ = setup_training(tiny_model)
