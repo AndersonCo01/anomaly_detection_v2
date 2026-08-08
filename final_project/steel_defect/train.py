@@ -53,9 +53,7 @@ def setup_training(
     Returns:
         Tuple of (criterion, optimizer).
     """
-    # ┌──────────────────────────────────────────────┐
-    # │  TRAIN-1: Write your code below              │
-    # └──────────────────────────────────────────────┘
+    # TRAIN-1: Write your code below
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
     return criterion, optimizer
@@ -107,9 +105,7 @@ def train_one_epoch(
             total += labels.size(0)
             correct += predicted.eq(labels).sum().item()
     """
-    # ┌──────────────────────────────────────────────┐
-    # │  TRAIN-2: Write your code below              │
-    # └──────────────────────────────────────────────┘
+    # TRAIN-2: Write your code below
     model.train()
     running_loss = 0.0
     correct = 0
@@ -163,9 +159,7 @@ def validate(
             for images, labels in loader:
                 ... forward pass and accumulate metrics ...
     """
-    # ┌──────────────────────────────────────────────┐
-    # │  TRAIN-3: Write your code below              │
-    # └──────────────────────────────────────────────┘
+    # TRAIN-3: Write your code below
     model.eval()
     running_loss = 0.0
     correct = 0
@@ -188,7 +182,7 @@ def validate(
     return running_loss / len(loader), correct / total
 
 
-# ── Scaffold — main training loop ─────────────────────────────
+# -- Scaffold: main training loop --
 
 def train(
     epochs: int = 20,
@@ -214,7 +208,7 @@ def train(
 
     start_time = time.time()
 
-    # ── Data ──────────────────────────────────────────────
+    # -- Data --
     logger.info("Loading dataset...")
     file_list = build_file_list()
     train_list, val_list, test_list = create_splits(file_list)
@@ -230,13 +224,13 @@ def train(
         batch_size=batch_size,
     )
 
-    # ── Model ─────────────────────────────────────────────
+    # -- Model --
     model = SteelCNN(num_classes=NUM_CLASSES).to(DEVICE)
     logger.info("Model: %s", model)
 
     criterion, optimizer = setup_training(model, learning_rate)
 
-    # ── Training Loop ─────────────────────────────────────
+    # -- Training Loop --
     best_val_acc = 0.0
     MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -259,27 +253,22 @@ def train(
             epoch_time,
         )
 
-        # ┌──────────────────────────────────────────────┐
-        # │  TRAIN-4: Save checkpoint if val_acc improved│
-        # │                                              │
-        # │  If val_acc > best_val_acc:                  │
-        # │    1. Update best_val_acc                    │
-        # │    2. Save a checkpoint dict with:           │
-        # │       - "model_state_dict": model.state_dict│
-        # │       - "optimizer_state_dict": optimizer... │
-        # │       - "epoch": epoch                       │
-        # │       - "best_val_acc": best_val_acc         │
-        # │       - "num_classes": NUM_CLASSES            │
-        # │    3. Use torch.save(checkpoint, CHECKPOINT_PATH)│
-        # │    4. Log the save event                     │
-        # │                                              │
-        # │  Hint:                                       │
-        # │    if val_acc > best_val_acc:                 │
-        # │        best_val_acc = val_acc                 │
-        # │        torch.save({...}, CHECKPOINT_PATH)    │
-        # │        logger.info("Saved best model ...")   │
-        # └──────────────────────────────────────────────┘
-        # TRAIN-4: Write your code below
+        # TRAIN-4: Save checkpoint if val_acc improved
+        # If val_acc > best_val_acc:
+        #   1. Update best_val_acc
+        #   2. Save a checkpoint dict with:
+        #      - "model_state_dict": model.state_dict()
+        #      - "optimizer_state_dict": optimizer.state_dict()
+        #      - "epoch": epoch
+        #      - "best_val_acc": best_val_acc
+        #      - "num_classes": NUM_CLASSES
+        #   3. Use torch.save(checkpoint, CHECKPOINT_PATH)
+        #   4. Log the save event
+        # Hint:
+        #   if val_acc > best_val_acc:
+        #       best_val_acc = val_acc
+        #       torch.save({...}, CHECKPOINT_PATH)
+        #       logger.info("Saved best model ...")
         if val_acc > best_val_acc:
             best_val_acc = val_acc
             checkpoint = {
@@ -309,4 +298,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
