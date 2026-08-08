@@ -16,21 +16,21 @@ jobs:
     strategy:
       matrix:
         include:
-          - name: Step 1: Preprocessing
+          - name: "Step 1: Preprocessing"
             test: tests/test_step1_preprocessing.py
             style: false
-          - name: Step 2: Dataset
+          - name: "Step 2: Dataset"
             test: tests/test_step2_dataset.py
             style: false
-          - name: Step 3: Model
+          - name: "Step 3: Model"
             test: tests/test_step3_model.py
             style: true
             style_test: tests/test_step3_style.py
-          - name: Step 4: Training
+          - name: "Step 4: Training"
             test: tests/test_step4_training.py
             style: true
             style_test: tests/test_step4_style.py
-          - name: Step 5: Inference
+          - name: "Step 5: Inference"
             test: tests/test_step5_inference.py
             style: false
 
