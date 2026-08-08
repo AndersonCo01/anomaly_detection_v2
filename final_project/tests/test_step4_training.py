@@ -25,7 +25,7 @@ from torch.utils.data import TensorDataset, DataLoader
 from steel_defect.train import setup_training, train_one_epoch, validate
 
 
-# ── Fixtures ──────────────────────────────────────────────
+# -- Fixtures ----
 
 NUM_CLASSES = 5
 DEVICE = torch.device("cpu")
@@ -64,7 +64,7 @@ def synthetic_loader():
     return DataLoader(dataset, batch_size=8, shuffle=True)
 
 
-# ── TRAIN-1: setup_training ──────────────────────────────
+# -- TRAIN-1: setup_training ----
 
 class TestTrain1Setup:
     """TRAIN-1: setup_training."""
@@ -116,7 +116,7 @@ class TestTrain1Setup:
         assert lr == 0.005, f"Expected lr=0.005, got {lr}"
 
 
-# ── TRAIN-2: train_one_epoch ─────────────────────────────
+# -- TRAIN-2: train_one_epoch ----
 
 class TestTrain2TrainOneEpoch:
     """TRAIN-2: train_one_epoch."""
@@ -184,7 +184,7 @@ class TestTrain2TrainOneEpoch:
         )
 
 
-# ── TRAIN-3: validate ────────────────────────────────────
+# -- TRAIN-3: validate ----
 
 class TestTrain3Validate:
     """TRAIN-3: validate."""
