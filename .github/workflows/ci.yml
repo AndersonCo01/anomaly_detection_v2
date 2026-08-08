@@ -7,110 +7,65 @@ on:
     branches: [main]
 
 jobs:
-  step1-preprocessing:
-    name: "Step 1: Preprocessing"
+  tests:
+    name: Run tests - ${{ matrix.name }}
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: final_project
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          pip install -r requirements.txt
-      - name: Run Step 1 tests
-        run: pytest tests/test_step1_preprocessing.py -v --tb=short
+    strategy:
+      matrix:
+        include:
+          - name: Step 1: Preprocessing
+            test: tests/test_step1_preprocessing.py
+            style: false
+          - name: Step 2: Dataset
+            test: tests/test_step2_dataset.py
+            style: false
+          - name: Step 3: Model
+            test: tests/test_step3_model.py
+            style: true
+            style_test: tests/test_step3_style.py
+          - name: Step 4: Training
+            test: tests/test_step4_training.py
+            style: true
+            style_test: tests/test_step4_style.py
+          - name: Step 5: Inference
+            test: tests/test_step5_inference.py
+            style: false
 
-  step2-dataset:
-    name: "Step 2: Dataset"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: final_project
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          pip install -r requirements.txt
-      - name: Run Step 2 tests
-        run: pytest tests/test_step2_dataset.py -v --tb=short
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  step3-model:
-    name: "Step 3: Model"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: final_project
-    steps:
-      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: final_project/requirements.txt
+
+      - name: Restore pip cache (fallback)
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/pip/wheels
+          key: ${{ runner.os }}-pip-${{ hashFiles('final_project/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+          # try CPU wheels first; allow fallback if not available in cache
+          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu || true
           pip install -r requirements.txt
-      - name: Run Step 3 tests
-        run: pytest tests/test_step3_model.py -v --tb=short
-      - name: "Style hints (advisory — won't affect your grade)"
-        if: always()
+
+      - name: Run tests
+        run: pytest ${{ matrix.test }} -v --tb=short
+
+      - name: Style hints (advisory — won't affect your grade)
+        if: ${{ matrix.style }}
         continue-on-error: true
-        run: pytest tests/test_step3_style.py -v --tb=short
-
-  step4-training:
-    name: "Step 4: Training"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: final_project
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          pip install -r requirements.txt
-      - name: Run Step 4 tests
-        run: pytest tests/test_step4_training.py -v --tb=short
-      - name: "Style hints (advisory — won't affect your grade)"
-        if: always()
-        continue-on-error: true
-        run: pytest tests/test_step4_style.py -v --tb=short
-
-  step5-inference:
-    name: "Step 5: Inference"
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: final_project
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-          pip install -r requirements.txt
-      - name: Run Step 5 tests
-        run: pytest tests/test_step5_inference.py -v --tb=short
+        run: pytest ${{ matrix.style_test }} -v --tb=short
