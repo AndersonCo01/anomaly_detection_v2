@@ -24,11 +24,11 @@ def build_file_list(data_dir: Path | str | None = None) -> list[tuple[str, int]]
     DATA-1: Scan the dataset directory and build a list of (path, label) pairs.
 
     The dataset is organized as one subdirectory per class, for example:
-        no_defect/ -> label 0
-        defect_1/  -> label 1
-        defect_2/  -> label 2
-        defect_3/  -> label 3
-        defect_4/  -> label 4
+        no_defect/   -> label 0
+        defect_1/    -> label 1
+        defect_2/    -> label 2
+        defect_3/    -> label 3
+        defect_4/    -> label 4
 
     For each class folder that exists in CLASS_NAMES:
         1. Get the label index from CLASS_NAMES.index(folder_name)
@@ -37,7 +37,7 @@ def build_file_list(data_dir: Path | str | None = None) -> list[tuple[str, int]]
 
     Args:
         data_dir: Root directory containing class subdirectories.
-                  Defaults to DATA_DIR from utils.
+                   Defaults to DATA_DIR from utils.
 
     Returns:
         List of (image_path_str, label_index) tuples, sorted by path.
