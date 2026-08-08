@@ -1,5 +1,5 @@
 """
-Step 4 Tests — TRAIN-1, TRAIN-2, and TRAIN-3.
+Step 4 Tests - TRAIN-1, TRAIN-2, and TRAIN-3.
 
 Run with:
     pytest tests/test_step4_training.py -v
@@ -214,7 +214,7 @@ class TestTrain3Validate:
 
         for before, after in zip(params_before, tiny_model.parameters()):
             assert torch.allclose(before, after.data), (
-                "Model weights changed during validation — "
+                "Model weights changed during validation - "
                 "make sure you're not calling backward() or optimizer.step()"
             )
 
